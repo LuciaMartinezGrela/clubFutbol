@@ -1,6 +1,7 @@
 package ventanas;
 
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.EventQueue;
@@ -23,7 +24,7 @@ import javax.swing.border.EmptyBorder;
 
 import base.BtnPersonalizado;
 import base.Principal;
-import base.PrincipalCentroVeterinario;
+import modelos.ObjetoComboBox;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -74,7 +75,7 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 	JComboBox comboBoxLat;
 	JComboBox comboBoxPos;
 	JComboBox comboBox_parentesco;
-	JComboBox comboBoxCat;
+	JComboBox<ObjetoComboBox> comboBoxCat;
 	JComboBox comboBoxSexo;
 	JComboBox comboBoxEstado;
 	JComboBox comboBoxDia;
@@ -437,32 +438,10 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent evento) {
-
-		if (evento.getSource() == this.btnExaminar) {
-			// elegir ubicacion del archivo
-			Scanner entrada = null;
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.showOpenDialog(fileChooser);
-			try {
-				String ruta = fileChooser.getSelectedFile().getAbsolutePath();
-				File f = new File(ruta);
-				entrada = new Scanner(f);
-				while (entrada.hasNext()) {
-					System.out.println(entrada.nextLine());
-				}
-			} catch (FileNotFoundException e) {
-				System.out.println(e.getMessage());
-			} catch (NullPointerException e) {
-				System.out.println("No se ha seleccionado ningún fichero");
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-			} finally {
-				if (entrada != null) {
-					entrada.close();
-				}
-			}
-
-		}
+//no funciona da ruta absoluta
+		String rutaRelativa=obtenerRutaRelativaFoto(evento);
+		textField_foto.setText(rutaRelativa);
+		System.out.println(rutaRelativa);
 
 		if (evento.getSource() == this.btnInsertarJugador) {
 
@@ -485,7 +464,7 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 			String parentesco = (String) comboBox_parentesco.getSelectedItem();
 			String lat = (String) comboBoxLat.getSelectedItem();
 			String pos = (String) comboBoxPos.getSelectedItem();
-			String cat = (String) comboBoxCat.getSelectedItem();
+			int cat = ((ObjetoComboBox) comboBoxCat.getSelectedItem()).getId();
 			String lesiones = textAreaLesiones.getText();
 			String caract = textAreaCaract.getText();
 			String dia = (String) comboBoxDia.getSelectedItem();
@@ -500,10 +479,16 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 					|| !nombreT.isEmpty() || !dniJ.isEmpty() || !ape1T.isEmpty() || !ape2T.isEmpty() || !dniT.isEmpty()
 					|| !tlf1.isEmpty() || !tlf2.isEmpty() || !email.isEmpty() || !dire.isEmpty() || sexo != "Elegir"
 					|| estado != "Elegir" || parentesco != "Seleccionar" || lat != "Seleccionar" || pos != "Seleccionar"
-					|| cat != "Seleccionar") {
+					) {
 
 				// insertar en base de datos
-				Statement sentencia = Principal.conexion.createStatement();
+				Statement sentencia = null;
+				try {
+					sentencia = Principal.conexion.createStatement();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				
 				ResultSet resultado = null;
 				ResultSet idpierna = null;
@@ -525,13 +510,26 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 					} else {
 						idpierna = sentencia.executeQuery(
 								"SELECT idPiernaDominante from lateralidad where predomio='" + lat + "';");
+						idpierna.next();	
+						int idpiernaInt= idpierna.getInt(1);
+						
 						//como paso el resultset a un int para insertarlo en la base de datos?
-						idCat = sentencia.executeQuery("SELECT idCat from categorias where nombreCat='" + cat + "';");
+						/*
+						 * idCat =
+						 * sentencia.executeQuery("SELECT idCat from categorias where nombreCat='" + cat
+						 * + "';"); idCat.next(); int idCatInt= idCat.getInt(1);
+						 */
+						
 						idPos = sentencia
 								.executeQuery("SELECT idPosicion from posiciones where nombrePos='" + pos + "';");
+						idPos.next();	
+						int idPosInt= idPos.getInt(1);
+						
 						idParen = sentencia
 								.executeQuery("SELECT idParentesco from parentesco where tipo='" + parentesco + "';");
-
+						idParen.next();	
+						int idParenInt= idParen.getInt(1);
+						
 						try {
 //dnifutbolis, nomre, apeli, apell, sexo, fecha de nac, centro escolar, alergias, lesiones, caracteristicas, idpiernadom, idcat, idpos, estado url imagen
 							sentencia1 = Principal.conexion.prepareStatement("insert into futbolista values (?,?)");
@@ -545,9 +543,9 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 							sentencia1.setString(8, alergias);
 							sentencia1.setString(9, lesiones);
 							sentencia1.setString(10, caract);
-							sentencia1.setInt(11, idpierna);
-							sentencia1.setString(12, idCat);
-							sentencia1.setString(13, idPos);
+							sentencia1.setInt(11, idpiernaInt);
+							sentencia1.setInt(12, cat);
+							sentencia1.setInt(13, idPosInt);
 							sentencia1.setString(14, estado);
 							sentencia1.setString(15, urlImagen);
 
@@ -575,7 +573,7 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 
 				// pintar de rojo esos campo vacíos
 				pintarRojoCamposVacios(nombreJ, ape1J, ape2J, cole, alergias, dniJ, nombreT, ape1T, ape2T, dniT, tlf1,
-						tlf2, email, dire, sexo, estado, parentesco, lat, pos, cat);
+						tlf2, email, dire, sexo, estado, parentesco, lat, pos);
 
 				// avisa de que no se ha insertado porque algún campo obligatorio está vacío
 				JOptionPane.showMessageDialog(null, "Algún campo lo has dejado vacío", "Error al insertar futbolista",
@@ -585,10 +583,33 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 
 	}
 
+	private String obtenerRutaRelativaFoto(ActionEvent evento) {
+		String rutaRelativa="";
+		if (evento.getSource() == this.btnExaminar) {
+			// elegir ubicacion del archivo
+			
+			JFileChooser fileChooser = new JFileChooser();
+			fileChooser.showOpenDialog(fileChooser);
+			try {
+				String ruta = fileChooser.getSelectedFile().getAbsolutePath();
+				
+				File f = new File(ruta);
+				rutaRelativa=f.getPath();
+				
+			} catch (NullPointerException e) {
+				System.out.println("No se ha seleccionado ningún fichero");
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				
+			}
+			
+		}
+		return rutaRelativa;
+	}
+
 	private void pintarRojoCamposVacios(String nombreJ, String ape1J, String ape2J, String cole, String alergias,
 			String dniJ, String nombreT, String ape1T, String ape2T, String dniT, String tlf1, String tlf2,
-			String email, String dire, String sexo, String estado, String parentesco, String lat, String pos,
-			String cat) {
+			String email, String dire, String sexo, String estado, String parentesco, String lat, String pos) {
 		if (nombreJ.isEmpty()) {
 			textFieldNombre.setBackground(Color.red);
 		}
@@ -657,9 +678,6 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 			comboBox_parentesco.setBackground(Color.red);
 		}
 
-		if (cat.isEmpty()) {
-			comboBoxCat.setBackground(Color.red);
-		}
 
 		if (pos.isEmpty()) {
 			comboBoxPos.setBackground(Color.red);

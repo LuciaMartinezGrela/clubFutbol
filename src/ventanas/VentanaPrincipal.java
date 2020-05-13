@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 
 import base.BtnPersonalizado;
 import base.Principal;
+import modelos.ObjetoComboBox;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -38,6 +39,7 @@ import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.awt.Font;
 import javax.swing.JComboBox;
 import javax.swing.DefaultComboBoxModel;
@@ -380,10 +382,11 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 				v3.comboBoxLat.addItem(resultado.getString(1));
 			}
 			
-			ResultSet resultado2=sentencia.executeQuery("SELECT nombreCat FROM categorias ");
+			
+			ResultSet resultado2=sentencia.executeQuery("SELECT nombreCat, idCat FROM categorias ");
 			while (resultado2.next()) {
-
-				v3.comboBoxCat.addItem(resultado2.getString(1));
+				
+				v3.comboBoxCat.addItem(new ObjetoComboBox (resultado2.getString(1),resultado2.getInt(2)));
 			}
 			
 			ResultSet resultado3=sentencia.executeQuery("SELECT nombrePos FROM posiciones ");
