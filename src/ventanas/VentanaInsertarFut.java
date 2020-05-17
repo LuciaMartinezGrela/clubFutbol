@@ -22,8 +22,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import base.BtnPersonalizado;
 import base.Principal;
+import modelos.BtnPersonalizado;
 import modelos.ObjetoComboBox;
 
 import javax.imageio.ImageIO;
@@ -72,9 +72,9 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 	private JTextField textField_email;
 	private JTextField textField_dire;
 
-	JComboBox comboBoxLat;
-	JComboBox comboBoxPos;
-	JComboBox comboBox_parentesco;
+	JComboBox<ObjetoComboBox> comboBoxLat;
+	JComboBox<ObjetoComboBox> comboBoxPos;
+	JComboBox<ObjetoComboBox> comboBox_parentesco;
 	JComboBox<ObjetoComboBox> comboBoxCat;
 	JComboBox comboBoxSexo;
 	JComboBox comboBoxEstado;
@@ -175,7 +175,7 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 
 		comboBoxSexo = new JComboBox();
 		comboBoxSexo.setFont(new Font("Verdana", Font.PLAIN, 16));
-		comboBoxSexo.setModel(new DefaultComboBoxModel(new String[] { "Elegir", "Masculino", "Femenino" }));
+		comboBoxSexo.setModel(new DefaultComboBoxModel(new String[] { "Masculino", "Femenino" }));
 		comboBoxSexo.setBounds(221, 151, 111, 26);
 		panelCentral.add(comboBoxSexo);
 
@@ -254,7 +254,7 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 
 		comboBoxEstado = new JComboBox();
 		comboBoxEstado.setFont(new Font("Verdana", Font.PLAIN, 16));
-		comboBoxEstado.setModel(new DefaultComboBoxModel(new String[] { "Elegir", "Alta", "Baja" }));
+		comboBoxEstado.setModel(new DefaultComboBoxModel(new String[] { "Alta", "Baja" }));
 		comboBoxEstado.setBounds(936, 287, 75, 26);
 		panelCentral.add(comboBoxEstado);
 
@@ -264,7 +264,6 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 		panelCentral.add(lblLateralidad);
 
 		comboBoxLat = new JComboBox();
-		comboBoxLat.setModel(new DefaultComboBoxModel(new String[] { "Seleccionar" }));
 		comboBoxLat.setFont(new Font("Verdana", Font.PLAIN, 16));
 		comboBoxLat.setBounds(1299, 287, 187, 26);
 		panelCentral.add(comboBoxLat);
@@ -275,7 +274,6 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 		panelCentral.add(lblCategora);
 
 		comboBoxCat = new JComboBox();
-		comboBoxCat.setModel(new DefaultComboBoxModel(new String[] { "Seleccionar" }));
 		comboBoxCat.setFont(new Font("Verdana", Font.PLAIN, 16));
 		comboBoxCat.setBounds(936, 355, 163, 21);
 		panelCentral.add(comboBoxCat);
@@ -286,7 +284,6 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 		panelCentral.add(lblPosicin);
 
 		comboBoxPos = new JComboBox();
-		comboBoxPos.setModel(new DefaultComboBoxModel(new String[] { "Seleccionar" }));
 		comboBoxPos.setFont(new Font("Verdana", Font.PLAIN, 16));
 		comboBoxPos.setBounds(1299, 356, 187, 21);
 		panelCentral.add(comboBoxPos);
@@ -405,9 +402,8 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 		panelCentral.add(lblParentesco);
 
 		comboBox_parentesco = new JComboBox();
-		comboBox_parentesco.setModel(new DefaultComboBoxModel(new String[] { "Seleccionar" }));
 		comboBox_parentesco.setFont(new Font("Verdana", Font.PLAIN, 16));
-		comboBox_parentesco.setBounds(936, 643, 163, 21);
+		comboBox_parentesco.setBounds(936, 638, 163, 26);
 		panelCentral.add(comboBox_parentesco);
 
 		JLabel lblDatosFutbolista = new JLabel("Datos Futbolista");
@@ -438,10 +434,15 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent evento) {
-//no funciona da ruta absoluta
-		String rutaRelativa=obtenerRutaRelativaFoto(evento);
-		textField_foto.setText(rutaRelativa);
-		System.out.println(rutaRelativa);
+//obtengo ruta absoluta para mostrar en el textField
+		// selecciono el nombre del archivo para hacer la ruta relativa
+		String urlImagen = "";
+
+		if (evento.getSource() == this.btnExaminar) {
+			// elegir ubicacion del archivo
+			urlImagen = extraerRutaRelativaFoto();
+
+		}
 
 		if (evento.getSource() == this.btnInsertarJugador) {
 
@@ -461,9 +462,9 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 			String dire = textField_dire.getText();
 			String sexo = (String) comboBoxSexo.getSelectedItem();
 			String estado = (String) comboBoxEstado.getSelectedItem();
-			String parentesco = (String) comboBox_parentesco.getSelectedItem();
-			String lat = (String) comboBoxLat.getSelectedItem();
-			String pos = (String) comboBoxPos.getSelectedItem();
+			int parentesco = ((ObjetoComboBox) comboBox_parentesco.getSelectedItem()).getId();
+			int lat = ((ObjetoComboBox) comboBoxLat.getSelectedItem()).getId();
+			int pos = ((ObjetoComboBox) comboBoxPos.getSelectedItem()).getId();
 			int cat = ((ObjetoComboBox) comboBoxCat.getSelectedItem()).getId();
 			String lesiones = textAreaLesiones.getText();
 			String caract = textAreaCaract.getText();
@@ -471,109 +472,78 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 			String mes = (String) comboBoxMes.getSelectedItem();
 			String ano = (String) comboBox.getSelectedItem();
 			String fechaNac = ano + "-" + mes + "-" + dia;
-			String urlImagen=textField_foto.getText();
-			// falta url relativa imagen
+
 
 			// insertar datos en tablas de jugadores, tutores y jugadoresXtutores
 			if (!nombreJ.isEmpty() || !ape1J.isEmpty() || !ape2J.isEmpty() || !cole.isEmpty() || !alergias.isEmpty()
 					|| !nombreT.isEmpty() || !dniJ.isEmpty() || !ape1T.isEmpty() || !ape2T.isEmpty() || !dniT.isEmpty()
-					|| !tlf1.isEmpty() || !tlf2.isEmpty() || !email.isEmpty() || !dire.isEmpty() || sexo != "Elegir"
-					|| estado != "Elegir" || parentesco != "Seleccionar" || lat != "Seleccionar" || pos != "Seleccionar"
-					) {
-
-				// insertar en base de datos
-				Statement sentencia = null;
-				try {
-					sentencia = Principal.conexion.createStatement();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+					|| !tlf1.isEmpty() || !tlf2.isEmpty() || !email.isEmpty() || !dire.isEmpty()) {
 				
-				ResultSet resultado = null;
-				ResultSet idpierna = null;
-				ResultSet idCat = null;
-				ResultSet idPos = null;
-				ResultSet idParen = null;
-				PreparedStatement sentencia1;
-
-				try {
-
-					resultado = sentencia
-							.executeQuery("SELECT dniFutbolista FROM futbolista where dniFutbolista='" + dniJ + "'");
-					if (resultado.next()) {
-
-						JOptionPane.showMessageDialog(null,
-								"¡OJO! Ese jugador ya existe, modifícalo en vez de insertarlo", "Insertar Futbolista",
-								JOptionPane.PLAIN_MESSAGE);
-
-					} else {
-						idpierna = sentencia.executeQuery(
-								"SELECT idPiernaDominante from lateralidad where predomio='" + lat + "';");
-						idpierna.next();	
-						int idpiernaInt= idpierna.getInt(1);
-						
-						//como paso el resultset a un int para insertarlo en la base de datos?
-						/*
-						 * idCat =
-						 * sentencia.executeQuery("SELECT idCat from categorias where nombreCat='" + cat
-						 * + "';"); idCat.next(); int idCatInt= idCat.getInt(1);
-						 */
-						
-						idPos = sentencia
-								.executeQuery("SELECT idPosicion from posiciones where nombrePos='" + pos + "';");
-						idPos.next();	
-						int idPosInt= idPos.getInt(1);
-						
-						idParen = sentencia
-								.executeQuery("SELECT idParentesco from parentesco where tipo='" + parentesco + "';");
-						idParen.next();	
-						int idParenInt= idParen.getInt(1);
-						
-						try {
-//dnifutbolis, nomre, apeli, apell, sexo, fecha de nac, centro escolar, alergias, lesiones, caracteristicas, idpiernadom, idcat, idpos, estado url imagen
-							sentencia1 = Principal.conexion.prepareStatement("insert into futbolista values (?,?)");
-							sentencia1.setString(1, dniJ);
-							sentencia1.setString(2, nombreJ);
-							sentencia1.setString(3, ape1J);
-							sentencia1.setString(4, ape2J);
-							sentencia1.setString(5, sexo);
-							sentencia1.setString(6, fechaNac);
-							sentencia1.setString(7, cole);
-							sentencia1.setString(8, alergias);
-							sentencia1.setString(9, lesiones);
-							sentencia1.setString(10, caract);
-							sentencia1.setInt(11, idpiernaInt);
-							sentencia1.setInt(12, cat);
-							sentencia1.setInt(13, idPosInt);
-							sentencia1.setString(14, estado);
-							sentencia1.setString(15, urlImagen);
-
-
-							sentencia1.execute();
-
-						} catch (SQLException e) {
-
-							e.printStackTrace();
-						}
-
-						JOptionPane.showMessageDialog(null, "Futbolista insertado correctamente", "Insertar Futbolista",
-								JOptionPane.PLAIN_MESSAGE);
-
+				//si el dni tiene formato adecuado entonces seguimos con la inserción
+				if (validarDNI(dniJ) == true) {
+					// insertar en base de datos
+					Statement sentencia = null;
+					try {
+						sentencia = Principal.conexion.createStatement();
+					} catch (SQLException e1) {
+						System.out.println("error al establecer las sentencia" + e1);
 					}
-				} catch (HeadlessException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+
+					ResultSet resultado = null;
+					PreparedStatement sentencia1;
+
+					try {
+						// comprobación de que el dni del jugador existe en la BBDD
+						resultado = sentencia.executeQuery(
+								"SELECT dniFutbolista FROM futbolista where dniFutbolista='" + dniJ + "'");
+						if (resultado.next()) {
+
+							JOptionPane.showMessageDialog(null,
+									"¡OJO! Ese jugador ya existe, modifícalo en vez de insertarlo",
+									"Insertar Futbolista", JOptionPane.WARNING_MESSAGE);
+							// comprobación de que el dni del tutor existe
+							resultado = sentencia.executeQuery(
+									"SELECT dniResponsable FROM tutor where dniResponsable='" + dniT + "'");
+							if (resultado.next()) {
+								JOptionPane.showMessageDialog(null,
+										"¡OJO! Ese tutor ya existe, modifícalo en vez de insertarlo",
+										"Insertar Futbolista", JOptionPane.WARNING_MESSAGE);
+							}
+
+						} else {
+
+							insertarJugadorBD(urlImagen, nombreJ, ape1J, ape2J, cole, alergias, dniJ, sexo, estado, lat,
+									pos, cat, lesiones, caract, fechaNac);
+
+							// hacer métodoo para insertar tutor en tabla Tutores
+							insertarTutorBD(nombreT, ape1T, ape2T, dniT, tlf1, email, dire);
+
+							// hacer metodo para insertar en la tabla tutorXfutbolista
+
+							insertarJugXtut(dniJ, dniT, parentesco);
+
+							JOptionPane.showMessageDialog(null, "Futbolista insertado correctamente",
+									"Insertar Futbolista", JOptionPane.INFORMATION_MESSAGE);
+						}
+						
+					} catch (HeadlessException e) {
+						System.out.println("Error al hacer la búsqueda");
+					} catch (SQLException e) {
+						System.out.println("Error de mysql" + e);
+					}
+
+				} else {
+					System.out.println("El dni introducido no está en el formato correcto");
+					textFieldDNI.setBackground(Color.red);
+					JOptionPane.showMessageDialog(null, "El formato del DNI es incorrecto (8 números + 1 letra)", "Error al insertar futbolista",
+							JOptionPane.ERROR_MESSAGE);
 				}
 
 			} else {
 
 				// pintar de rojo esos campo vacíos
 				pintarRojoCamposVacios(nombreJ, ape1J, ape2J, cole, alergias, dniJ, nombreT, ape1T, ape2T, dniT, tlf1,
-						tlf2, email, dire, sexo, estado, parentesco, lat, pos);
+						tlf2, email, dire, sexo, estado);
 
 				// avisa de que no se ha insertado porque algún campo obligatorio está vacío
 				JOptionPane.showMessageDialog(null, "Algún campo lo has dejado vacío", "Error al insertar futbolista",
@@ -583,33 +553,102 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 
 	}
 
-	private String obtenerRutaRelativaFoto(ActionEvent evento) {
-		String rutaRelativa="";
-		if (evento.getSource() == this.btnExaminar) {
-			// elegir ubicacion del archivo
-			
-			JFileChooser fileChooser = new JFileChooser();
-			fileChooser.showOpenDialog(fileChooser);
-			try {
-				String ruta = fileChooser.getSelectedFile().getAbsolutePath();
-				
-				File f = new File(ruta);
-				rutaRelativa=f.getPath();
-				
-			} catch (NullPointerException e) {
-				System.out.println("No se ha seleccionado ningún fichero");
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				
-			}
-			
+	private void insertarJugXtut(String dniJ, String dniT, int parentesco) {
+		PreparedStatement sentencia3;
+		try {
+			// al ser id autoincrement ya lo inserta solo. Se marca unicamente los campos
+			// que queremos añadir
+			sentencia3 = Principal.conexion
+					.prepareStatement("insert into tutor (dniFutbolista, dniResponsable, idParentesco) values (?,?,?)");
+			sentencia3.setString(1, dniJ);
+			sentencia3.setString(2, dniT);
+			sentencia3.setInt(3, parentesco);
+
+			sentencia3.execute();
+
+		} catch (SQLException e) {
+
+			System.out.println("Error al insertar el tutor en la BD" + e);
+		}
+	}
+
+	private void insertarTutorBD(String nombreT, String ape1T, String ape2T, String dniT, String tlf1, String email,
+			String dire) {
+		PreparedStatement sentencia2;
+		try {
+
+			sentencia2 = Principal.conexion.prepareStatement("insert into tutor values (?,?,?,?,?,?,?,?)");
+			sentencia2.setString(1, dniT);
+			sentencia2.setString(2, nombreT);
+			sentencia2.setString(3, ape1T);
+			sentencia2.setString(4, ape2T);
+			sentencia2.setString(5, dire);
+			sentencia2.setString(6, email);
+			sentencia2.setString(7, tlf1);
+			sentencia2.setString(8, tlf1);
+
+			sentencia2.execute();
+
+		} catch (SQLException e) {
+
+			System.out.println("Error al insertar el tutor en la BD" + e);
+		}
+	}
+
+	private void insertarJugadorBD(String urlImagen, String nombreJ, String ape1J, String ape2J, String cole,
+			String alergias, String dniJ, String sexo, String estado, int lat, int pos, int cat, String lesiones,
+			String caract, String fechaNac) {
+		PreparedStatement sentencia1;
+		try {
+
+			sentencia1 = Principal.conexion
+					.prepareStatement("insert into futbolista values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+			sentencia1.setString(1, dniJ);
+			sentencia1.setString(2, nombreJ);
+			sentencia1.setString(3, ape1J);
+			sentencia1.setString(4, ape2J);
+			sentencia1.setString(5, sexo);
+			sentencia1.setString(6, fechaNac);
+			sentencia1.setString(7, cole);
+			sentencia1.setString(8, alergias);
+			sentencia1.setString(9, lesiones);
+			sentencia1.setString(10, caract);
+			sentencia1.setInt(11, lat);
+			sentencia1.setInt(12, cat);
+			sentencia1.setInt(13, pos);
+			sentencia1.setString(14, estado);
+			sentencia1.setString(15, urlImagen);
+
+			sentencia1.execute();
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+		}
+	}
+
+	private String extraerRutaRelativaFoto() {
+		String rutaRelativa = null;
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.showOpenDialog(fileChooser);
+		try {
+			String rutaAbsoluta = fileChooser.getSelectedFile().getAbsolutePath();
+			String nombreArchivo = fileChooser.getSelectedFile().getName();
+			textField_foto.setText(rutaAbsoluta);
+			rutaRelativa = "/imgJugador/" + nombreArchivo;
+
+		} catch (NullPointerException e) {
+			System.out.println("No se ha seleccionado ningún fichero");
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+
 		}
 		return rutaRelativa;
 	}
 
 	private void pintarRojoCamposVacios(String nombreJ, String ape1J, String ape2J, String cole, String alergias,
 			String dniJ, String nombreT, String ape1T, String ape2T, String dniT, String tlf1, String tlf2,
-			String email, String dire, String sexo, String estado, String parentesco, String lat, String pos) {
+			String email, String dire, String sexo, String estado) {
 		if (nombreJ.isEmpty()) {
 			textFieldNombre.setBackground(Color.red);
 		}
@@ -674,17 +713,58 @@ public class VentanaInsertarFut extends JFrame implements ActionListener {
 			comboBoxEstado.setBackground(Color.red);
 		}
 
-		if (parentesco.isEmpty()) {
-			comboBox_parentesco.setBackground(Color.red);
+	}
+
+	// metodo que mira que la longitud sea de 9 digitos y que el ultimo sea una
+	// letra
+	public boolean validarDNI(String dni) {
+		String letraMayus = "";
+		if (dni.length() != 9 || Character.isLetter(dni.charAt(8)) == false) {
+			return false;
+		}
+		letraMayus = (dni.substring(8)).toUpperCase();
+		// si se cumple comprueba que los 8 primeros sean numeros y comprueba que la
+		// letra sea la correcta
+		if (soloNumeros(dni) == true && letraDNI(dni).equals(letraMayus)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	// si el dni introducido tiene numeros en los 8 primeros caracteres devuelve
+	// true
+	private boolean soloNumeros(String dni) {
+		int i, j = 0;
+		String numero = "";
+		String miDNI = "";
+		String[] unoNueve = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+
+		for (i = 0; i < dni.length() - 1; i++) {
+			numero = dni.substring(i, i + 1);
+			for (j = 0; j < unoNueve.length; j++) {
+				if (numero.equals(unoNueve[j])) {
+					miDNI += unoNueve[j];
+				}
+			}
 		}
 
-
-		if (pos.isEmpty()) {
-			comboBoxPos.setBackground(Color.red);
+		if (miDNI.length() != 8) {
+			return false;
+		} else {
+			return true;
 		}
+	}
 
-		if (lat.isEmpty()) {
-			comboBoxLat.setBackground(Color.red);
-		}
+	// asgina la letra que corresponde al dni segun su numeración
+	private String letraDNI(String dni) {
+		int miDNI = Integer.parseInt(dni.substring(0, 8));
+		int resto = 0;
+		String miLetra = "";
+		String[] asignacionLetra = { "T", "R", "W", "A", "G", "M", "Y", "F", "P", "D", "X", "B", "N", "J", "Z", "S",
+				"Q", "V", "H", "L", "C", "K", "E" };
+		resto = miDNI % 23;
+		miLetra = asignacionLetra[resto];
+		return miLetra;
 	}
 }

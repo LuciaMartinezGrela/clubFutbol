@@ -13,8 +13,8 @@ import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import base.BtnPersonalizado;
 import base.Principal;
+import modelos.BtnPersonalizado;
 import modelos.ObjetoComboBox;
 
 import javax.swing.JMenu;
@@ -67,6 +67,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 
 	static BtnPersonalizado btnNuevoFut;
 	static BtnPersonalizado btnBuscarCategoria;
+	static BtnPersonalizado btnBuscarTutor;
 
 	// FondoPanel fondo = new FondoPanel();
 
@@ -79,9 +80,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 	/**
 	 * Create the frame.
 	 */
-	/**
-	 * 
-	 */
+
 	public JPanel panel = new JPanel() {
 		public void paint(Graphics g) {
 
@@ -153,6 +152,23 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		btnBuscarCategoria.addActionListener(this);
 
 		panel.add(btnBuscarCategoria);
+
+		btnBuscarTutor = new BtnPersonalizado();
+		btnBuscarTutor.setBounds(417, 330, 303, 66);
+		btnBuscarTutor.setBorderPainted(false);
+		btnBuscarTutor.setContentAreaFilled(false);
+		btnBuscarTutor.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+		try {
+			img = ImageIO.read(getClass().getResource("/imagenes/button_buscar-tutor-a.png"));
+			btnBuscarTutor.setIcon(new ImageIcon(img));
+		} catch (IOException e) {
+
+			System.out.println("Error al cargar la imagen del boton buscar categoria");
+		}
+		btnBuscarTutor.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		btnBuscarTutor.addActionListener(this);
+
+		panel.add(btnBuscarTutor);
 
 		// barra de menú
 		JMenuBar menuBar = new JMenuBar();
@@ -338,6 +354,8 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent evento) {
 		VentanaBuscarPorCat v2;
 		VentanaInsertarFut v3;
+		VentanaBuscarTutor v4;
+		
 		System.out.println("ha entrado en el evento");
 		if (evento.getSource() == this.btnBuscarCategoria) {
 			System.out.println("Has pulsado el boton de buscar por categoría");
@@ -358,15 +376,25 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 			rellenarComboBoxsInsertarJug(v3);
 			v3.setVisible(true);
 		}
+		
+		if (evento.getSource() == this.btnBuscarTutor) {
+			System.out.println("Has pulsado el boton de buscar tutor");
+			// abrir ventana nueva
+			// que muestre un jcombo box para que el usuario seleccione una opcion
+
+			v4 = new VentanaBuscarTutor();
+			//rellenarComboBoxsInsertarJug(v3);
+			v4.setVisible(true);
+		}
 	}
 
 	private void rellenarComboBoxCat(VentanaBuscarPorCat v2) {
 		try {
 			Statement sentencia = Principal.conexion.createStatement();
-			ResultSet resultado = sentencia.executeQuery("SELECT nombreCat FROM categorias");
+			ResultSet resultado = sentencia.executeQuery("SELECT nombreCat, idCat FROM categorias");
 			while (resultado.next()) {
 
-				v2.comboBox.addItem(resultado.getString(1));
+				v2.comboBox.addItem(new ObjetoComboBox(resultado.getString(1), resultado.getInt(2)));
 			}
 		} catch (SQLException e1) {
 			System.out.println("Error al cargar el comboBox de las categoría" + e1);
@@ -376,31 +404,32 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 	private void rellenarComboBoxsInsertarJug(VentanaInsertarFut v3) {
 		try {
 			Statement sentencia = Principal.conexion.createStatement();
-			ResultSet resultado = sentencia.executeQuery("SELECT predominio FROM lateralidad");
+			ResultSet resultado = sentencia.executeQuery("SELECT predominio, idPiernaDominante FROM lateralidad");
 			while (resultado.next()) {
 
-				v3.comboBoxLat.addItem(resultado.getString(1));
+				v3.comboBoxLat.addItem(new ObjetoComboBox(resultado.getString(1), resultado.getInt(2)));
 			}
-			
-			
-			ResultSet resultado2=sentencia.executeQuery("SELECT nombreCat, idCat FROM categorias ");
+
+			ResultSet resultado2 = sentencia.executeQuery("SELECT nombreCat, idCat FROM categorias ");
 			while (resultado2.next()) {
-				
-				v3.comboBoxCat.addItem(new ObjetoComboBox (resultado2.getString(1),resultado2.getInt(2)));
+
+				v3.comboBoxCat.addItem(new ObjetoComboBox(resultado2.getString(1), resultado2.getInt(2)));
 			}
-			
-			ResultSet resultado3=sentencia.executeQuery("SELECT nombrePos FROM posiciones ");
+
+			ResultSet resultado3 = sentencia.executeQuery("SELECT nombrePos, idPosicion FROM posiciones ");
 			while (resultado3.next()) {
 
-				v3.comboBoxPos.addItem(resultado3.getString(1));
+				v3.comboBoxPos.addItem(new ObjetoComboBox(resultado3.getString(1), resultado3.getInt(2)));
 			}
-			
-			ResultSet resultado4=sentencia.executeQuery("SELECT tipo FROM parentesco ");
+
+			ResultSet resultado4 = sentencia.executeQuery("SELECT tipo, idParentesco FROM parentesco ");
 			while (resultado4.next()) {
 
-				v3.comboBox_parentesco.addItem(resultado4.getString(1));
+				v3.comboBox_parentesco.addItem(new ObjetoComboBox(resultado4.getString(1), resultado4.getInt(2)));
 			}
-			
+
+			// limpiar textfields
+
 		} catch (SQLException e1) {
 			System.out.println("Error al cargar el comboBoxs" + e1);
 		}

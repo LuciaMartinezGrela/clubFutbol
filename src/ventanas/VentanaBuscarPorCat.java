@@ -26,8 +26,9 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 
-import base.BtnPersonalizado;
 import base.Principal;
+import modelos.BtnPersonalizado;
+import modelos.ObjetoComboBox;
 
 import java.awt.Font;
 import javax.swing.JTable;
@@ -99,12 +100,6 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		Container contenedor = getContentPane();
 		contenedor.add(panel);
 		panel.setLayout(new BorderLayout(0, 0));
-		try {
-			img = ImageIO.read(getClass().getResource("/imagenes/button_buscar-jugadores.png"));
-		} catch (IOException e) {
-
-			System.out.println("Error al cargar la imagen del boton buscar jugadores");
-		}
 
 		JPanel panel_1 = new JPanel();
 		panel.add(panel_1, BorderLayout.NORTH);
@@ -119,194 +114,196 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		panel_1.add(label);
 
 		// boton para confirmar la búsqueda
-		btnBuscarJugadores = new BtnPersonalizado();
-		panel_1.add(btnBuscarJugadores);
-		btnBuscarJugadores.setBorderPainted(false);
-		btnBuscarJugadores.setContentAreaFilled(false);
-		btnBuscarJugadores.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		btnBuscarJugadores.setIcon(new ImageIcon(img));
-		btnBuscarJugadores.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnBuscarJugadores.addActionListener(this);
-
-		JPanel panel_2 = new JPanel();
-		panel.add(panel_2, BorderLayout.CENTER);
-
-		/*
-		 * JScrollPane scrollPane = new JScrollPane(); panel_2.add(scrollPane);
-		 */
-		panel_2.setLayout(null);
-
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(56, 10, 1093, 322);
-		panel_2.add(scrollPane);
-
-		table = new JTable();
-		// escuchador de la tabla
-		table.addMouseListener(new MouseAdapter() {
-			@Override
-			// acción de clic en una fila concreta
-			public void mouseClicked(MouseEvent arg0) {
-				// int seleccionar = table.rowAtPoint(arg0.getPoint());
-				int fila = table.getSelectedRow();
-				// recoge el valor de la fila selecciona y la primera columna (que es la que
-				// corresponde al dni PK)
-				String dni = (String) table.getValueAt(fila, 0);
-				String alergias= buscarDetallesJug("fut.alergias", dni);
-				textArea.setText(alergias);
-				String lesiones=buscarDetallesJug("fut.lesiones", dni);
-				textArea_1.setText(lesiones);
-				String caract=buscarDetallesJug("fut.caracteristicas", dni);
-				textArea_2.setText(caract);
-				String urlImagen=buscarDetallesJug("fut.urlImagen",dni);
-				
-				Image img3 = null;
-				try {
-					img3 = ImageIO.read(getClass().getResource(urlImagen));
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-				
-				label2.setIcon(new ImageIcon(img3));
-			}
-
-			// método para buscar informacion del jugador seleccionado de la tabla e
-			// imprimirlo en sus respectivas areas
-			private String buscarDetallesJug(String campoAbuscar, String dni) {
-				try {
-					Statement sentencia = Principal.conexion.createStatement();
-					ResultSet resultado = sentencia.executeQuery(
-							"select " + campoAbuscar + " from futbolista fut where fut.dniFutbolista='" + dni + "';");
-
-					while (resultado.next()) {
-						String busqueda = resultado.getString(1);
-						System.out.println(busqueda);
-						return busqueda;
-
-					}
-
-				} catch (SQLException e) {
-					System.out.println("Error al hacer la búsqueda de alergias de un futbolista" + e);
-				}
-				return "";
-			}
-		});
-
-		table.setFont(new java.awt.Font("Tahoma", 0, 16));
-
-		table.setBounds(5, 5, 0, 0);
-
-		// la hemos añadido al scroll
-		scrollPane.setViewportView(table);
-
-		JLabel lblAlergias = new JLabel("Alergias");
-		lblAlergias.setFont(new Font("Verdana", Font.PLAIN, 20));
-		lblAlergias.setBounds(157, 400, 106, 25);
-		panel_2.add(lblAlergias);
-
-		JLabel lblLesiones = new JLabel("Lesiones");
-		lblLesiones.setFont(new Font("Verdana", Font.PLAIN, 20));
-		lblLesiones.setBounds(527, 400, 106, 25);
-		panel_2.add(lblLesiones);
-
-		JLabel lblCaractersticas = new JLabel("Características");
-		lblCaractersticas.setFont(new Font("Verdana", Font.PLAIN, 20));
-		lblCaractersticas.setBounds(1014, 400, 178, 25);
-		panel_2.add(lblCaractersticas);
-
-		textArea = new JTextArea();
-		textArea.setFont(new Font("Verdana", Font.PLAIN, 18));
-		textArea.setBounds(56, 435, 326, 207);
-		Border border = BorderFactory.createLineBorder(Color.black);
-		textArea.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		panel_2.add(textArea);
-
-		textArea_1 = new JTextArea();
-		textArea_1.setFont(new Font("Verdana", Font.PLAIN, 18));
-		textArea_1.setBounds(423, 435, 326, 207);
-		Border border_1 = BorderFactory.createLineBorder(Color.black);
-		textArea_1.setBorder(
-				BorderFactory.createCompoundBorder(border_1, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		panel_2.add(textArea_1);
-
-		textArea_2 = new JTextArea();
-		textArea_2.setFont(new Font("Verdana", Font.PLAIN, 18));
-		textArea_2.setBounds(790, 435, 615, 207);
-		Border border_2 = BorderFactory.createLineBorder(Color.black);
-		textArea_2.setBorder(
-				BorderFactory.createCompoundBorder(border_2, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		panel_2.add(textArea_2);
-		
-		label2.setBounds(1166, 39, 393, 264);
-		label2.setBorder(border_2);
-		panel_2.add(label2);
-		
-		//Icono de alergias
-		JLabel label_iconoAlergias = new JLabel("");
-		Image img4 = null;
-		try {
-			img4 = ImageIO.read(getClass().getResource("/imagenes/alergias.png"));
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		
-		label_iconoAlergias.setIcon(new ImageIcon(img4));
-		label_iconoAlergias.setBounds(117, 394, 30, 31);
-		panel_2.add(label_iconoAlergias);
-		
-		//Icono de lesiones
-				JLabel label_iconoLesiones = new JLabel("");
-				Image img5 = null;
-				try {
-					img5 = ImageIO.read(getClass().getResource("/imagenes/ambulancia.png"));
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				label_iconoLesiones.setIcon(new ImageIcon(img5));
-				label_iconoLesiones.setBounds(487, 394, 35, 35);
-				panel_2.add(label_iconoLesiones);
-				
-				//Icono de caracteristicas
-				JLabel label_iconoCaract = new JLabel("");
-				Image img6 = null;
-				try {
-					img6 = ImageIO.read(getClass().getResource("/imagenes/caract.png"));
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				label_iconoCaract.setIcon(new ImageIcon(img6));
-				label_iconoCaract.setBounds(969, 394, 35, 35);
-				panel_2.add(label_iconoCaract);		
-
-		//panel 3 con boton de ok
-		JPanel panel_3 = new JPanel();
-		panel.add(panel_3, BorderLayout.SOUTH);
 
 		try {
-			img2 = ImageIO.read(getClass().getResource("/imagenes/button_ok.png"));
+			img = ImageIO.read(getClass().getResource("/imagenes/button_buscar-jugadores.png"));
 		} catch (IOException e) {
 
-			System.out.println("Error al cargar la imagen del boton ok");
+			System.out.println("Error al cargar la imagen del boton buscar jugadores");
+			btnBuscarJugadores = new BtnPersonalizado();
+			panel_1.add(btnBuscarJugadores);
+			btnBuscarJugadores.setBorderPainted(false);
+			btnBuscarJugadores.setContentAreaFilled(false);
+			btnBuscarJugadores.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+			btnBuscarJugadores.setIcon(new ImageIcon(img));
+			btnBuscarJugadores.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			btnBuscarJugadores.addActionListener(this);
+
+			JPanel panel_2 = new JPanel();
+			panel.add(panel_2, BorderLayout.CENTER);
+
+			panel_2.setLayout(null);
+
+			JScrollPane scrollPane = new JScrollPane();
+			scrollPane.setBounds(56, 10, 1093, 322);
+			panel_2.add(scrollPane);
+
+			table = new JTable();
+			// escuchador de la tabla
+			table.addMouseListener(new MouseAdapter() {
+				@Override
+				// acción de clic en una fila concreta
+				public void mouseClicked(MouseEvent arg0) {
+					// int seleccionar = table.rowAtPoint(arg0.getPoint());
+					int fila = table.getSelectedRow();
+					// recoge el valor de la fila selecciona y la primera columna (que es la que
+					// corresponde al dni PK)
+					String dni = (String) table.getValueAt(fila, 0);
+					String alergias = buscarDetallesJug("fut.alergias", dni);
+					textArea.setText(alergias);
+					String lesiones = buscarDetallesJug("fut.lesiones", dni);
+					textArea_1.setText(lesiones);
+					String caract = buscarDetallesJug("fut.caracteristicas", dni);
+					textArea_2.setText(caract);
+					String urlImagen = buscarDetallesJug("fut.urlImagen", dni);
+
+					Image img3 = null;
+					try {
+						img3 = ImageIO.read(getClass().getResource(urlImagen));
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
+					label2.setIcon(new ImageIcon(img3));
+				}
+
+				// método para buscar informacion del jugador seleccionado de la tabla e
+				// imprimirlo en sus respectivas areas
+				private String buscarDetallesJug(String campoAbuscar, String dni) {
+					try {
+						Statement sentencia = Principal.conexion.createStatement();
+						ResultSet resultado = sentencia.executeQuery("select " + campoAbuscar
+								+ " from futbolista fut where fut.dniFutbolista='" + dni + "';");
+
+						while (resultado.next()) {
+							String busqueda = resultado.getString(1);
+							System.out.println(busqueda);
+							return busqueda;
+
+						}
+
+					} catch (SQLException e) {
+						System.out.println("Error al hacer la búsqueda de alergias de un futbolista" + e);
+					}
+					return "";
+				}
+			});
+
+			table.setFont(new java.awt.Font("Tahoma", 0, 16));
+
+			table.setBounds(5, 5, 0, 0);
+
+			// la hemos añadido al scroll
+			scrollPane.setViewportView(table);
+
+			JLabel lblAlergias = new JLabel("Alergias");
+			lblAlergias.setFont(new Font("Verdana", Font.PLAIN, 20));
+			lblAlergias.setBounds(157, 400, 106, 25);
+			panel_2.add(lblAlergias);
+
+			JLabel lblLesiones = new JLabel("Lesiones");
+			lblLesiones.setFont(new Font("Verdana", Font.PLAIN, 20));
+			lblLesiones.setBounds(527, 400, 106, 25);
+			panel_2.add(lblLesiones);
+
+			JLabel lblCaractersticas = new JLabel("Características");
+			lblCaractersticas.setFont(new Font("Verdana", Font.PLAIN, 20));
+			lblCaractersticas.setBounds(1014, 400, 178, 25);
+			panel_2.add(lblCaractersticas);
+
+			textArea = new JTextArea();
+			textArea.setFont(new Font("Verdana", Font.PLAIN, 18));
+			textArea.setBounds(56, 435, 326, 207);
+			Border border = BorderFactory.createLineBorder(Color.black);
+			textArea.setBorder(
+					BorderFactory.createCompoundBorder(border, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+			panel_2.add(textArea);
+
+			textArea_1 = new JTextArea();
+			textArea_1.setFont(new Font("Verdana", Font.PLAIN, 18));
+			textArea_1.setBounds(423, 435, 326, 207);
+			Border border_1 = BorderFactory.createLineBorder(Color.black);
+			textArea_1.setBorder(
+					BorderFactory.createCompoundBorder(border_1, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+			panel_2.add(textArea_1);
+
+			textArea_2 = new JTextArea();
+			textArea_2.setFont(new Font("Verdana", Font.PLAIN, 18));
+			textArea_2.setBounds(790, 435, 615, 207);
+			Border border_2 = BorderFactory.createLineBorder(Color.black);
+			textArea_2.setBorder(
+					BorderFactory.createCompoundBorder(border_2, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+			panel_2.add(textArea_2);
+
+			label2.setBounds(1166, 39, 393, 264);
+			label2.setBorder(border_2);
+			panel_2.add(label2);
+
+			// Icono de alergias
+			JLabel label_iconoAlergias = new JLabel("");
+			Image img4 = null;
+			try {
+				img4 = ImageIO.read(getClass().getResource("/imagenes/alergias.png"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			label_iconoAlergias.setIcon(new ImageIcon(img4));
+			label_iconoAlergias.setBounds(117, 394, 30, 31);
+			panel_2.add(label_iconoAlergias);
+
+			// Icono de lesiones
+			JLabel label_iconoLesiones = new JLabel("");
+			Image img5 = null;
+			try {
+				img5 = ImageIO.read(getClass().getResource("/imagenes/ambulancia.png"));
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			label_iconoLesiones.setIcon(new ImageIcon(img5));
+			label_iconoLesiones.setBounds(487, 394, 35, 35);
+			panel_2.add(label_iconoLesiones);
+
+			// Icono de caracteristicas
+			JLabel label_iconoCaract = new JLabel("");
+			Image img6 = null;
+			try {
+				img6 = ImageIO.read(getClass().getResource("/imagenes/caract.png"));
+			} catch (IOException e1) {
+				System.out.println("Error al cargar el icono de las caracteristicas" + e1);
+			}
+
+			label_iconoCaract.setIcon(new ImageIcon(img6));
+			label_iconoCaract.setBounds(969, 394, 35, 35);
+			panel_2.add(label_iconoCaract);
+
+			// panel 3 con boton de ok
+			JPanel panel_3 = new JPanel();
+			panel.add(panel_3, BorderLayout.SOUTH);
+
+			try {
+				img2 = ImageIO.read(getClass().getResource("/imagenes/button_ok.png"));
+			} catch (IOException e1) {
+
+				System.out.println("Error al cargar la imagen del boton ok");
+			}
+
+			// boton para confirmar la búsqueda
+			btnOK = new BtnPersonalizado();
+			panel_3.add(btnOK);
+			btnOK.setBorderPainted(false);
+			btnOK.setContentAreaFilled(false);
+			btnOK.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+			btnOK.setIcon(new ImageIcon(img2));
+			btnOK.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+			btnOK.addActionListener(this);
+
+			this.dispose();
 		}
-
-		// boton para confirmar la búsqueda
-		btnOK = new BtnPersonalizado();
-		panel_3.add(btnOK);
-		btnOK.setBorderPainted(false);
-		btnOK.setContentAreaFilled(false);
-		btnOK.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
-		btnOK.setIcon(new ImageIcon(img2));
-		btnOK.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		btnOK.addActionListener(this);
-
-		this.dispose();
-
 	}
 
 	@Override
@@ -333,7 +330,7 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 	}
 
 	private void busquedaMuestraJugadoresXCat() {
-		String catSeleccionada = (String) comboBox.getSelectedItem();
+		String catSeleccionada = ((ObjetoComboBox) comboBox.getSelectedItem()).getNombre();
 		// hacer búsqueda
 		try {
 			Statement sentencia = Principal.conexion.createStatement();
