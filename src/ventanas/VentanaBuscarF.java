@@ -2,59 +2,48 @@ package ventanas;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Cursor;
 import java.awt.EventQueue;
-import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Toolkit;
-import java.io.File;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
-import java.net.URL;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
 import base.Principal;
 import modelos.BtnPersonalizado;
 import modelos.ObjetoComboBox;
 
 import java.awt.Font;
-import javax.swing.JTable;
-import javax.swing.JButton;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
-import javax.swing.JScrollPane;
-import javax.swing.JScrollBar;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.JScrollPane;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
+public class VentanaBuscarF extends JFrame implements ActionListener {
 
-public class VentanaBuscarPorCat extends JFrame implements ActionListener {
-
-	public JPanel contentPane;
-	public Image imagenFondo;
-	public URL fondo;
+	private JPanel contentPane;
 	public static BtnPersonalizado btnBuscarJugadores;
 	public static BtnPersonalizado btnOK;
 	public JComboBox comboBox;
@@ -65,65 +54,43 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 
 	public static JTable table;
 
-	Image img;
-	Image img2;
+	Image img, img2;
 	Icon iconobtn1;
-
-	public JPanel panel = new JPanel() {
-		public void paint(Graphics g) {
-
-			g.drawImage(imagenFondo, 0, 0, getWidth(), getHeight(), this);
-			setOpaque(false);
-			super.paint(g);
-		}
-	};
+	private JTextField textField_dni;
 
 	/**
 	 * Create the frame.
 	 */
-	public VentanaBuscarPorCat() {
-		setTitle("Buscar jugadores por categoría");
+	public VentanaBuscarF() {
+		setTitle("Buscar jugadores o jugadoras");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(VentanaLogueo.class.getResource("/imagenes/IconoBalon.png")));
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);// hacer que se cierre solo esa ventana, no el programa entero
+		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setBounds(100, 100, 1604, 882);
-		setLocationRelativeTo(null);
-		// this.setContentPane(fondo);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 
-		// fondo de ventana
-		/*
-		 * fondo=this.getClass().getResource("/imagenes/fondoRojo.jpg"); imagenFondo=
-		 * new ImageIcon(fondo).getImage();
-		 */
-		Container contenedor = getContentPane();
-		contenedor.add(panel);
-		panel.setLayout(new BorderLayout(0, 0));
+		JPanel panel = new JPanel();
+		contentPane.add(panel, BorderLayout.NORTH);
 
-		JPanel panel_1 = new JPanel();
-		panel.add(panel_1, BorderLayout.NORTH);
+		JLabel lblInserteDni = new JLabel("Inserte dni:");
+		lblInserteDni.setFont(new Font("Verdana", Font.BOLD, 20));
+		panel.add(lblInserteDni);
 
-		comboBox = new JComboBox();
-		panel_1.add(comboBox);
-		comboBox.setFont(new Font("Verdana", Font.BOLD, 20));
-		comboBox.setForeground(Color.black); // cambia el color de la letrade los items no seleccionados
-		comboBox.setBackground(Color.white);
-
-		JLabel label = new JLabel("              ");
-		panel_1.add(label);
-
-		// boton para confirmar la búsqueda
+		textField_dni = new JTextField();
+		textField_dni.setFont(new Font("Verdana", Font.PLAIN, 20));
+		panel.add(textField_dni);
+		textField_dni.setColumns(10);
 
 		try {
 			img = ImageIO.read(getClass().getResource("/imagenes/button_buscar-jugadores.png"));
 		} catch (IOException e) {
 			System.out.println("Error al cargar la imagen del boton buscar jugadores");
 		}
-		
+
 		btnBuscarJugadores = new BtnPersonalizado();
-		panel_1.add(btnBuscarJugadores);
+		panel.add(btnBuscarJugadores);
 		btnBuscarJugadores.setBorderPainted(false);
 		btnBuscarJugadores.setContentAreaFilled(false);
 		btnBuscarJugadores.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -131,14 +98,13 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		btnBuscarJugadores.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnBuscarJugadores.addActionListener(this);
 
-		JPanel panel_2 = new JPanel();
-		panel.add(panel_2, BorderLayout.CENTER);
-
-		panel_2.setLayout(null);
+		JPanel panel_1 = new JPanel();
+		contentPane.add(panel_1, BorderLayout.CENTER);
+		panel_1.setLayout(null);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(56, 10, 1093, 322);
-		panel_2.add(scrollPane);
+		scrollPane.setBounds(56, 22, 1057, 336);
+		panel_1.add(scrollPane);
 
 		table = new JTable();
 		// escuchador de la tabla
@@ -202,24 +168,24 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		JLabel lblAlergias = new JLabel("Alergias");
 		lblAlergias.setFont(new Font("Verdana", Font.PLAIN, 20));
 		lblAlergias.setBounds(157, 400, 106, 25);
-		panel_2.add(lblAlergias);
+		panel_1.add(lblAlergias);
 
 		JLabel lblLesiones = new JLabel("Lesiones");
 		lblLesiones.setFont(new Font("Verdana", Font.PLAIN, 20));
 		lblLesiones.setBounds(527, 400, 106, 25);
-		panel_2.add(lblLesiones);
+		panel_1.add(lblLesiones);
 
 		JLabel lblCaractersticas = new JLabel("Características");
 		lblCaractersticas.setFont(new Font("Verdana", Font.PLAIN, 20));
 		lblCaractersticas.setBounds(1014, 400, 178, 25);
-		panel_2.add(lblCaractersticas);
+		panel_1.add(lblCaractersticas);
 
 		textArea = new JTextArea();
 		textArea.setFont(new Font("Verdana", Font.PLAIN, 18));
 		textArea.setBounds(56, 435, 326, 207);
 		Border border = BorderFactory.createLineBorder(Color.black);
 		textArea.setBorder(BorderFactory.createCompoundBorder(border, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		panel_2.add(textArea);
+		panel_1.add(textArea);
 
 		textArea_1 = new JTextArea();
 		textArea_1.setFont(new Font("Verdana", Font.PLAIN, 18));
@@ -227,7 +193,7 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		Border border_1 = BorderFactory.createLineBorder(Color.black);
 		textArea_1.setBorder(
 				BorderFactory.createCompoundBorder(border_1, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		panel_2.add(textArea_1);
+		panel_1.add(textArea_1);
 
 		textArea_2 = new JTextArea();
 		textArea_2.setFont(new Font("Verdana", Font.PLAIN, 18));
@@ -235,11 +201,11 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		Border border_2 = BorderFactory.createLineBorder(Color.black);
 		textArea_2.setBorder(
 				BorderFactory.createCompoundBorder(border_2, BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		panel_2.add(textArea_2);
+		panel_1.add(textArea_2);
 
 		label2.setBounds(1166, 39, 393, 264);
 		label2.setBorder(border_2);
-		panel_2.add(label2);
+		panel_1.add(label2);
 
 		// Icono de alergias
 		JLabel label_iconoAlergias = new JLabel("");
@@ -253,7 +219,7 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 
 		label_iconoAlergias.setIcon(new ImageIcon(img4));
 		label_iconoAlergias.setBounds(117, 394, 30, 31);
-		panel_2.add(label_iconoAlergias);
+		panel_1.add(label_iconoAlergias);
 
 		// Icono de lesiones
 		JLabel label_iconoLesiones = new JLabel("");
@@ -267,7 +233,7 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 
 		label_iconoLesiones.setIcon(new ImageIcon(img5));
 		label_iconoLesiones.setBounds(487, 394, 35, 35);
-		panel_2.add(label_iconoLesiones);
+		panel_1.add(label_iconoLesiones);
 
 		// Icono de caracteristicas
 		JLabel label_iconoCaract = new JLabel("");
@@ -280,11 +246,7 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 
 		label_iconoCaract.setIcon(new ImageIcon(img6));
 		label_iconoCaract.setBounds(969, 394, 35, 35);
-		panel_2.add(label_iconoCaract);
-
-		// panel 3 con boton de ok
-		JPanel panel_3 = new JPanel();
-		panel.add(panel_3, BorderLayout.SOUTH);
+		panel_1.add(label_iconoCaract);
 
 		try {
 			img2 = ImageIO.read(getClass().getResource("/imagenes/button_ok.png"));
@@ -292,6 +254,10 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 
 			System.out.println("Error al cargar la imagen del boton ok");
 		}
+
+		// panel 3 con boton de ok
+		JPanel panel_3 = new JPanel();
+		contentPane.add(panel_3, BorderLayout.SOUTH);
 
 		// boton para confirmar la búsqueda
 		btnOK = new BtnPersonalizado();
@@ -302,36 +268,32 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		btnOK.setIcon(new ImageIcon(img2));
 		btnOK.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		btnOK.addActionListener(this);
+
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent evento) {
-		if (evento.getSource() == this.btnBuscarJugadores) {
-
-			if (comboBox.getSelectedItem() != null) {
-				busquedaMuestraJugadoresXCat();
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == this.btnBuscarJugadores) {
+			String dniIntroducido = textField_dni.getText();
+			if (!dniIntroducido.isEmpty()) {
+				busquedaMuestraJugadoresXdni(dniIntroducido);
 				// si pulsa X que se cierre solo esa ventana
 
 			} else {
-				JOptionPane.showMessageDialog(null,
-						"Selecciona categoría del futbolista",
-						"Error al buscar futbolista", JOptionPane.ERROR_MESSAGE);
-				System.out.println("Selecciona la categoría, que sino no vas a encontrar a los jugadores");
+				JOptionPane.showMessageDialog(null, "Introduce el dni del futbolista", "Error al buscar futbolista",
+						JOptionPane.ERROR_MESSAGE);
+				System.out.println("no se ha introducido dni para buscar jugador");
+				textField_dni.setBackground(Color.red);
 			}
-
 		}
 
-		// después de visualizar los resultados si se pulsa ok se vuelve a la ventana
-		// principal
-
-		if (evento.getSource() == VentanaBuscarPorCat.btnOK) {
+		if (e.getSource() == this.btnOK) {
 			this.dispose();
 		}
-
 	}
 
-	private void busquedaMuestraJugadoresXCat() {
-		String catSeleccionada = ((ObjetoComboBox) comboBox.getSelectedItem()).getNombre();
+	private void busquedaMuestraJugadoresXdni(String dniIntroducido) {
+
 		// hacer búsqueda
 		try {
 			Statement sentencia = Principal.conexion.createStatement();
@@ -341,7 +303,8 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 							+ "from categorias cat, futbolista fut, lateralidad lat, posiciones pos\r\n"
 							+ "where cat.idCat= fut.idCategoria\r\n"
 							+ "and lat.idPiernaDominante=fut.idPiernaDominante\r\n"
-							+ "and pos.idPosicion=fut.idPosicion\r\n" + "and cat.nombreCat='" + catSeleccionada + "';");
+							+ "and pos.idPosicion=fut.idPosicion\r\n" + "and fut.dniFutbolista='" + dniIntroducido
+							+ "';");
 
 			DefaultTableModel modelo = establecerModeloTabla();
 			establecerAnchoColumnas();
@@ -388,7 +351,7 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		modelo.addColumn("Posicion");
 		modelo.addColumn("Colegio");
 
-		VentanaBuscarPorCat.table.setModel(modelo);
+		VentanaBuscarF.table.setModel(modelo);
 		return modelo;
 	}
 
@@ -429,4 +392,5 @@ public class VentanaBuscarPorCat extends JFrame implements ActionListener {
 		table.getColumnModel().getColumn(8).setCellRenderer(modelocentrar);
 		table.getColumnModel().getColumn(9).setCellRenderer(modelocentrar);
 	}
+
 }

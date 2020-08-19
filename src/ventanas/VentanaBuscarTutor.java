@@ -3,7 +3,7 @@ package ventanas;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
-import java.awt.EventQueue;
+
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -27,7 +27,7 @@ import javax.swing.table.TableColumn;
 
 import base.Principal;
 import modelos.BtnPersonalizado;
-import modelos.ObjetoComboBox;
+
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;

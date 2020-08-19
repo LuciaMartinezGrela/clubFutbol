@@ -64,6 +64,12 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 	JMenuItem menuItemModifCat;
 	JMenuItem menuItemBorrarCat;
 	JMenu menuOtros;
+	private JMenu MenuParen;
+	JMenuItem menuItemInsertarParen;
+	JMenuItem menuItemBorrarParen;
+	private JMenu MenuPos;
+	JMenuItem menuItemInsertarPos;
+	JMenuItem menuItemBorrarPos;
 
 	static BtnPersonalizado btnNuevoFut;
 	static BtnPersonalizado btnBuscarCategoria;
@@ -89,15 +95,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 			super.paint(g);
 		}
 	};
-	private JMenu MenuParen;
-	private JMenuItem menuItemInsertarParen;
-	private JMenuItem menuItemBorrarParen;
-	private JMenu MenuPos;
-	private JMenuItem menuItemInsertarPos;
-	private JMenuItem menuItemBorrarPos;
-	private JMenu MenuLat;
-	private JMenuItem menuItemInsertarLat;
-	private JMenuItem menuItemBorrarLat;
+	
 
 	public VentanaPrincipal(String tipoUser) {
 
@@ -186,21 +184,25 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		MenuItemBuscarFutbolista.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/buscar2.png")));
 		MenuItemBuscarFutbolista.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuFutbolistas.add(MenuItemBuscarFutbolista);
+		MenuItemBuscarFutbolista.addActionListener(this);
 
 		MenuItemInsertarFutbolista = new JMenuItem("Insertar");
 		MenuItemInsertarFutbolista.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/agregar2.png")));
 		MenuItemInsertarFutbolista.setFont(new Font("Verdana", Font.PLAIN, 20));
 		MenuFutbolistas.add(MenuItemInsertarFutbolista);
+		MenuItemInsertarFutbolista.addActionListener(this);
 
 		MenuItemModificarFutbolista = new JMenuItem("Modificar");
 		MenuItemModificarFutbolista.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/pencil.png")));
 		MenuItemModificarFutbolista.setFont(new Font("Verdana", Font.PLAIN, 20));
 		MenuFutbolistas.add(MenuItemModificarFutbolista);
+		MenuItemModificarFutbolista.addActionListener(this);
 
 		MenuItemBorrarFutbolista = new JMenuItem("Borrar");
 		MenuItemBorrarFutbolista.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/borrar2.png")));
 		MenuItemBorrarFutbolista.setFont(new Font("Verdana", Font.PLAIN, 20));
 		MenuFutbolistas.add(MenuItemBorrarFutbolista);
+		MenuItemBorrarFutbolista.addActionListener(this);
 
 		JMenu MenuTutor = new JMenu("   Tutor      ");
 		MenuTutor.setHorizontalAlignment(SwingConstants.CENTER);
@@ -213,21 +215,25 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		menuItemBuscarTutor.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/buscar2.png")));
 		menuItemBuscarTutor.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuTutor.add(menuItemBuscarTutor);
+		menuItemBuscarTutor.addActionListener(this);
 
 		menuItemInsertarTutor = new JMenuItem("Insertar");
 		menuItemInsertarTutor.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/agregar2.png")));
 		menuItemInsertarTutor.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuTutor.add(menuItemInsertarTutor);
+		menuItemInsertarTutor.addActionListener(this);
 
 		menuItemModificarTutor = new JMenuItem("Modificar");
 		menuItemModificarTutor.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/pencil.png")));
 		menuItemModificarTutor.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuTutor.add(menuItemModificarTutor);
+		menuItemModificarTutor.addActionListener(this);
 
 		menuItemBorrarTutor = new JMenuItem("Borrar");
 		menuItemBorrarTutor.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/borrar2.png")));
 		menuItemBorrarTutor.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuTutor.add(menuItemBorrarTutor);
+		menuItemBorrarTutor.addActionListener(this);
 
 		JMenu MenuEntrenamientos = new JMenu("Entrenamientos     ");
 		MenuEntrenamientos.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/trainer70.png")));
@@ -239,22 +245,26 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		menuItemBuscarEntrenamiento.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/buscar2.png")));
 		menuItemBuscarEntrenamiento.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuEntrenamientos.add(menuItemBuscarEntrenamiento);
+		menuItemBuscarEntrenamiento.addActionListener(this);
 
 		menuItemInsertarEntrenamiento = new JMenuItem("Insertar");
 		menuItemInsertarEntrenamiento
 				.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/agregar2.png")));
 		menuItemInsertarEntrenamiento.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuEntrenamientos.add(menuItemInsertarEntrenamiento);
+		menuItemInsertarEntrenamiento.addActionListener(this);
 
 		menuItemModifEntrenamiento = new JMenuItem("Modificar");
 		menuItemModifEntrenamiento.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/pencil.png")));
 		menuItemModifEntrenamiento.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuEntrenamientos.add(menuItemModifEntrenamiento);
+		menuItemModifEntrenamiento.addActionListener(this);
 
 		menuItemBorrarEntrenamiento = new JMenuItem("Borrar");
 		menuItemBorrarEntrenamiento.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/borrar2.png")));
 		menuItemBorrarEntrenamiento.setFont(new Font("Verdana", Font.PLAIN, 18));
 		MenuEntrenamientos.add(menuItemBorrarEntrenamiento);
+		menuItemBorrarEntrenamiento.addActionListener(this);
 
 		JMenu menuCat = new JMenu("  Categorías   ");
 		menuCat.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/categoria70.png")));
@@ -266,21 +276,25 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		menuItemBuscarCat.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/buscar2.png")));
 		menuItemBuscarCat.setFont(new Font("Verdana", Font.PLAIN, 20));
 		menuCat.add(menuItemBuscarCat);
+		menuItemBuscarCat.addActionListener(this);
 
 		menuItemInsertarCat = new JMenuItem("Insertar");
 		menuItemInsertarCat.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/agregar2.png")));
 		menuItemInsertarCat.setFont(new Font("Verdana", Font.PLAIN, 20));
 		menuCat.add(menuItemInsertarCat);
+		menuItemInsertarCat.addActionListener(this);
 
 		menuItemModifCat = new JMenuItem("Modificar");
 		menuItemModifCat.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/pencil.png")));
 		menuItemModifCat.setFont(new Font("Verdana", Font.PLAIN, 20));
 		menuCat.add(menuItemModifCat);
+		menuItemModifCat.addActionListener(this);
 
 		menuItemBorrarCat = new JMenuItem("Borrar");
 		menuItemBorrarCat.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/borrar2.png")));
 		menuItemBorrarCat.setFont(new Font("Verdana", Font.PLAIN, 20));
 		menuCat.add(menuItemBorrarCat);
+		menuItemBorrarCat.addActionListener(this);
 
 		menuOtros = new JMenu("   Otros          ");
 		menuOtros.setIcon(new ImageIcon(VentanaPrincipal.class.getResource("/imagenes/extra-time70.png")));
@@ -295,10 +309,12 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		menuItemInsertarParen = new JMenuItem("Insertar");
 		menuItemInsertarParen.setFont(new Font("Verdana", Font.PLAIN, 20));
 		MenuParen.add(menuItemInsertarParen);
+		menuItemInsertarParen.addActionListener(this);
 
 		menuItemBorrarParen = new JMenuItem("Borrar");
 		menuItemBorrarParen.setFont(new Font("Verdana", Font.PLAIN, 20));
 		MenuParen.add(menuItemBorrarParen);
+		menuItemBorrarParen.addActionListener(this);
 
 		MenuPos = new JMenu("Posiciones");
 		MenuPos.setFont(new Font("Verdana", Font.PLAIN, 20));
@@ -311,18 +327,8 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		menuItemBorrarPos = new JMenuItem("Borrar");
 		menuItemBorrarPos.setFont(new Font("Verdana", Font.PLAIN, 20));
 		MenuPos.add(menuItemBorrarPos);
+		menuItemInsertarPos.addActionListener(this);
 
-		MenuLat = new JMenu("Lateralidad");
-		MenuLat.setFont(new Font("Verdana", Font.PLAIN, 20));
-		menuOtros.add(MenuLat);
-
-		menuItemInsertarLat = new JMenuItem("Insertar");
-		menuItemInsertarLat.setFont(new Font("Verdana", Font.PLAIN, 20));
-		MenuLat.add(menuItemInsertarLat);
-
-		menuItemBorrarLat = new JMenuItem("Borrar");
-		menuItemBorrarLat.setFont(new Font("Verdana", Font.PLAIN, 20));
-		MenuLat.add(menuItemBorrarLat);
 
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.SOUTH);
@@ -355,9 +361,11 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 		VentanaBuscarPorCat v2;
 		VentanaInsertarFut v3;
 		VentanaBuscarTutor v4;
+		VentanaBuscarF v5;
+		VentanaModificarF v6;
 		
 		System.out.println("ha entrado en el evento");
-		if (evento.getSource() == this.btnBuscarCategoria) {
+		if (evento.getSource() == this.btnBuscarCategoria || evento.getSource()== this.menuItemBuscarCat) {
 			System.out.println("Has pulsado el boton de buscar por categoría");
 			// abrir ventana nueva
 			// que muestre un jcombo box para que el usuario seleccione una opcion
@@ -367,7 +375,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 			v2.setVisible(true);
 		}
 
-		if (evento.getSource() == this.btnNuevoFut) {
+		if (evento.getSource() == this.btnNuevoFut || evento.getSource()==this.MenuItemInsertarFutbolista) {
 			System.out.println("Has pulsado el boton de nuevo futbolista");
 			// abrir ventana nueva
 			// que muestre un jcombo box para que el usuario seleccione una opcion
@@ -377,7 +385,7 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 			v3.setVisible(true);
 		}
 		
-		if (evento.getSource() == this.btnBuscarTutor) {
+		if (evento.getSource() == this.btnBuscarTutor || evento.getSource()==this.menuItemBuscarTutor) {
 			System.out.println("Has pulsado el boton de buscar tutor");
 			// abrir ventana nueva
 			// que muestre un jcombo box para que el usuario seleccione una opcion
@@ -385,6 +393,18 @@ public class VentanaPrincipal extends JFrame implements ActionListener {
 			v4 = new VentanaBuscarTutor();
 			//rellenarComboBoxsInsertarJug(v3);
 			v4.setVisible(true);
+		}
+		
+		if (evento.getSource()==this.MenuItemBuscarFutbolista) {
+			v5 = new VentanaBuscarF();
+			//rellenarComboBoxsInsertarJug(v3);
+			v5.setVisible(true);
+		}
+		
+		if (evento.getSource()==this.MenuItemModificarFutbolista) {
+			v6 = new VentanaModificarF();
+			//rellenarComboBoxsInsertarJug(v3);
+			v6.setVisible(true);
 		}
 	}
 
